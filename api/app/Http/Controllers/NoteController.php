@@ -17,7 +17,7 @@ class NoteController extends Controller
     public function __construct()
     {
         $this->middleware('auth:sanctum');
-        $this->authorizeResource(Note::class, 'post');
+        $this->authorizeResource(Note::class, 'note');
     }
 
     public function index(Request $request)
@@ -53,7 +53,7 @@ class NoteController extends Controller
 
     public function show(Note $note)
     {
-        //
+        return new NoteResource($note);
     }
 
     public function update(UpdateNoteRequest $request, Note $note)

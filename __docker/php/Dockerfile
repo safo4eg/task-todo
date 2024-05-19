@@ -10,13 +10,7 @@ RUN apk update && apk add \
 #установка расширений php
 RUN docker-php-ext-install pdo pdo_mysql
 
-#install composer
-#RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Run composer install
-#RUN composer install
-
-# очистка кеша
+## очистка кеша
 RUN rm -rf /var/cache/apk/* && docker-php-source delete
 
 # создаем юзера www (1000 как и локально)

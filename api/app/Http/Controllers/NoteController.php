@@ -25,7 +25,21 @@ class NoteController extends Controller
 
     public function index(Request $request)
     {
-        return ListNoteResource::collection($request->user()->notes);
+        $inputTags = $request->input('tags');
+        $sort = $request->input('sort', 'desc');
+
+        $noteBuilder = $request->user()->notes();
+
+        if($inputTags) {
+            $tagsTitles = is_array($inputTags)? $inputTags: explode(' ', $inputTags);
+             $noteBuilder->whereHas('tags', function ($query) use($tagsTitles) {
+                $query->whereIn('title', $tagsTitles);
+            });
+        }
+
+        $noteBuilder->orderBy('created_at', $sort);
+
+        return ListNoteResource::collection($noteBuilder->get());
     }
 
     public function store(StoreNoteRequest $request)

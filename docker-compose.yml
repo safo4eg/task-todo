@@ -18,6 +18,7 @@ services:
     volumes:
       - ./api:/var/www/task-todo/api
     restart: always
+    container_name: task-todo-api
   mysql:
     image: mysql:latest
     environment:

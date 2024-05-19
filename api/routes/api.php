@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\NoteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/signin', 'signin');
     Route::delete('/logout', 'logout');
 });
+
+Route::apiResources([
+    'notes' => NoteController::class
+]);

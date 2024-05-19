@@ -24,4 +24,9 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class, 'user_id', 'id');
+    }
 }

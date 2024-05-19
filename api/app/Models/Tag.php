@@ -14,4 +14,6 @@ class Tag extends Model
     protected $table = 'tags';
     protected $primaryKey = 'id';
     protected $guarded = [];
+
+    protected $hidden = ['pivot'];
 }

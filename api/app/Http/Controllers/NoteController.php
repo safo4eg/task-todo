@@ -92,6 +92,7 @@ class NoteController extends Controller
 
     public function destroy(Note $note)
     {
-        //
+        $note->delete();
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 }

@@ -24,8 +24,8 @@ class AuthController extends Controller
         $attributes = $request->safe()->only(['username', 'password']);
         $user = User::create($attributes);
         return new JsonResponse([
-            'data' => ['token' => $user->createToken('token')->plainTextToken]
-        ]);
+            'token' => $user->createToken('token')->plainTextToken
+        ], Response::HTTP_CREATED);
     }
 
     public function signin(SigninRequest $request)
@@ -39,7 +39,7 @@ class AuthController extends Controller
         }
 
         return new JsonResponse([
-            'data' => ['token' => $user->createToken('token')->plainTextToken]
+            'token' => $user->createToken('token')->plainTextToken
         ], Response::HTTP_OK);
     }
 
@@ -47,8 +47,6 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return new JsonResponse([
-            'data' =>[]
-        ], Response::HTTP_NO_CONTENT);
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
 }

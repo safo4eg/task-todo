@@ -17,7 +17,8 @@ class StoreNoteRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:128'],
             'content' => ['required', 'string', 'max:1024'],
-            'tags' => ['required', 'array', 'min:1']
+            'tags' => ['required', 'array', 'min:1'],
+            'tags.*' => ['string', 'max:8']
         ];
     }
 }

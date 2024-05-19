@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Note;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class NotePolicy
 {
@@ -17,10 +18,15 @@ class NotePolicy
         return $user->id === $note->user_id;
     }
 
-    public function update(User $user, Note $note): bool
+    public function create(User $user)
     {
         return true;
     }
+
+   public function update(User $user, Note $note)
+   {
+       return $user->id === $note->user_id;
+   }
 
     public function delete(User $user, Note $note): bool
     {

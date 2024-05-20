@@ -47,23 +47,32 @@ class NoteController extends Controller
         $attributes = $request->validated();
         $attributes['user_id'] = $request->user()->id;
 
-        $note = DB::transaction(function () use($attributes) {
-           $note = Note::create([
-               'user_id' => $attributes['user_id'],
-               'title' => $attributes['title'],
-               'content' => $attributes['content']
-           ]);
+        DB::beginTransaction();
 
-           $tagsId = [];
-           foreach ($attributes['tags'] as $tagTitle) {
-               $tag = Tag::firstOrCreate(['title' => $tagTitle]);
-               $tagsId[] = $tag->id;
-           }
+        try {
+            $note = Note::create([
+                'user_id' => $attributes['user_id'],
+                'title' => $attributes['title'],
+                'content' => $attributes['content']
+            ]);
 
-           $note->tags()->attach($tagsId);
+            $tagsId = [];
+            foreach ($attributes['tags'] as $tagTitle) {
+                $tag = Tag::firstOrCreate(['title' => $tagTitle]);
+                $tagsId[] = $tag->id;
+            }
 
-           return $note;
-        });
+            $note->tags()->attach($tagsId);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return new JsonResponse(
+                ['error' => 'Error when creating a note'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
 
         return new JsonResponse(new NoteResource($note), Response::HTTP_CREATED);
     }
@@ -78,7 +87,9 @@ class NoteController extends Controller
         $attributes = collect($request->validated());
         $tags = $attributes->pull('tags');
 
-        DB::transaction(function () use($attributes, $tags, $note) {
+        DB::beginTransaction();
+
+        try {
             if($attributes->isNotEmpty()) {
                 if($attributes->has('title')) {
                     $note->title = $attributes['title'];
@@ -99,7 +110,16 @@ class NoteController extends Controller
                 }
                 $note->tags()->sync($tagsId);
             }
-        });
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return new JsonResponse(
+                ['error' => 'Error when updating a note'],
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
 
         return new JsonResponse(new NoteResource($note), Response::HTTP_OK);
     }
